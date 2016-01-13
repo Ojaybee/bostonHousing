@@ -9,7 +9,8 @@ from sklearn.tree import DecisionTreeRegressor
 ################################
 ### ADD EXTRA LIBRARIES HERE ###
 ################################
-
+from sklearn.cross_validation import train_test_split
+from sklearn.metrics import accuracy_score, mean_squared_error
 
 def load_data():
 	"""Load the Boston dataset."""
@@ -28,9 +29,7 @@ def explore_city_data(city_data):
 	###################################
 	### Step 1. YOUR CODE GOES HERE ###
 	###################################
-	print(city_data.DESCR)
-	print len(housing_prices)
-	print housing_prices
+
 	print "No. of housing features: " + str(housing_features.shape[1])
 	print "Minimum price: " + str(np.min(housing_prices))
 	print "Maximum price: " + str(np.max(housing_prices))
@@ -56,10 +55,9 @@ def split_data(city_data):
 	###################################
 	### Step 2. YOUR CODE GOES HERE ###
 	###################################
-	X_train = None
-	y_train = None
-	X_test = None
-	y_test = None
+	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+	
 	return X_train, y_train, X_test, y_test
 
 
@@ -69,10 +67,10 @@ def performance_metric(label, prediction):
 	###################################
 	### Step 3. YOUR CODE GOES HERE ###
 	###################################
-
+	return mean_squared_error(label, prediction)
 	# The following page has a table of scoring functions in sklearn:
 	# http://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics
-	pass
+	#pass
 
 
 def learning_curve(depth, X_train, y_train, X_test, y_test):
@@ -98,13 +96,13 @@ def learning_curve(depth, X_train, y_train, X_test, y_test):
 
 
 	# Plot learning curve graph
-	learning_curve_graph(sizes, train_err, test_err)
+	learning_curve_graph(sizes, train_err, test_err, depth)
 
 
-def learning_curve_graph(sizes, train_err, test_err):
+def learning_curve_graph(sizes, train_err, test_err, depth):
 	"""Plot training and test error as a function of the training size."""
 
-	pl.figure()
+	pl.figure(depth)
 	pl.title('Decision Trees: Performance vs Training Size')
 	pl.plot(sizes, test_err, lw=2, label = 'test error')
 	pl.plot(sizes, train_err, lw=2, label = 'training error')
@@ -144,7 +142,7 @@ def model_complexity(X_train, y_train, X_test, y_test):
 def model_complexity_graph(max_depth, train_err, test_err):
 	"""Plot training and test error as a function of the depth of the decision tree learn."""
 
-	pl.figure()
+	pl.figure("Model Complexity")
 	pl.title('Decision Trees: Performance vs Max Depth')
 	pl.plot(max_depth, test_err, lw=2, label = 'test error')
 	pl.plot(max_depth, train_err, lw=2, label = 'training error')
@@ -201,18 +199,18 @@ def main():
 	explore_city_data(city_data)
 
 	# # Training/Test dataset split
-	# X_train, y_train, X_test, y_test = split_data(city_data)
+	X_train, y_train, X_test, y_test = split_data(city_data)
 
-	# # Learning Curve Graphs
-	# max_depths = [1,2,3,4,5,6,7,8,9,10]
-	# for max_depth in max_depths:
-		# learning_curve(max_depth, X_train, y_train, X_test, y_test)
+	# Learning Curve Graphs
+	max_depths = [1,2,3,4,5,6,7,8,9,10]
+	for max_depth in max_depths:
+		learning_curve(max_depth, X_train, y_train, X_test, y_test)
 
-	# # Model Complexity Graph
-	# model_complexity(X_train, y_train, X_test, y_test)
+	# Model Complexity Graph
+	model_complexity(X_train, y_train, X_test, y_test)
 
-	# # Tune and predict Model
-	# fit_predict_model(city_data)
+	# Tune and predict Model
+	fit_predict_model(city_data)
 
 
 if __name__ == "__main__":
