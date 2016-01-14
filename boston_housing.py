@@ -23,6 +23,7 @@ from sklearn.cross_validation import train_test_split
 from sklearn.metrics import accuracy_score, mean_squared_error, make_scorer
 from sklearn import grid_search
 import warnings
+from sklearn.neighbors import NearestNeighbors
 
 def load_data():
 	"""Load the Boston dataset."""
@@ -198,11 +199,40 @@ def fit_predict_model(city_data):
 	print reg.best_params_
 	
 	# Use the model to predict the output of a particular sample
+	
+	# OJB sample to test boundaries of model - this sample might predict a price higher than original data's highest price. 
+	# for non obvious features avrg of the highest price houses values was used
+	#x = [0.00, 0.00, 11.00, 0, 0.00, 10.00, 100.00, 1.00, 24, 666.00, 16.00, 380.00, 1.00]
+	
+	# original sample
 	x = [11.95, 0.00, 18.100, 0, 0.6590, 5.6090, 90.00, 1.385, 24, 680.0, 20.20, 332.09, 12.13]
 	y = reg.predict(x)
 	print "House: " + str(x)
 	print "Prediction: " + str(y)
+	
+	# pro tip suggestion by the reviewer
+	indexes = find_nearest_neighbor_indexes(x, X)
+	sum_prices = []
+	for i in indexes:
+		sum_prices.append(city_data.target[i])
+	
+	
+	neighbor_avg = np.mean(sum_prices)
+	print "Nearest Neighbors average: " +str(neighbor_avg)
+	
+	
+	
 	return reg.best_params_
+	
+	# PRO TIP suggestion from the reviewer to check nearest neighbours
+	
+def find_nearest_neighbor_indexes(x, X):  # x is your vector and X is the data set.
+	neigh = NearestNeighbors( n_neighbors = 10 )
+	neigh.fit( X)
+	distance, indexes = neigh.kneighbors( x )
+	return indexes
+	
+	
 #In the case of the documentation page for GridSearchCV, it might be the case that the example is just a demonstration of syntax for use of the function, rather than a statement about 
 def main(plots):
 	"""Analyze the Boston housing data. Evaluate and validate the
@@ -253,7 +283,11 @@ if __name__ == "__main__":
 	
 	pl.ion()
 	
-	plots = True
+	plots = False
 	# suppresses deprecation warning 
 	warnings.filterwarnings('ignore')
 	main(plots)
+	
+	
+
+
