@@ -1,5 +1,11 @@
 """Load the Boston dataset and examine its target (label) distribution."""
 
+# --Included:
+# a loop for replicate runs
+# hacky way to keep plots open
+# suppression of warning messages
+# -------------------------------#
+
 # Load libraries
 import numpy as np
 import pylab as pl
